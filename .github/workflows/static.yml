@@ -17,7 +17,7 @@ jobs:
       uses: SamKirkland/FTP-Deploy-Action@4.3.3
       with:
         server: ftp.cluster029.hosting.ovh.net
-        server-dir: www/__vibe_code/overemp
+        server-dir: www/__vibe_code/overemp/
         username: softwarefh
         password: ${{ secrets.ftp_password }}
         
