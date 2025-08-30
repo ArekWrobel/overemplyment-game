@@ -1,3 +1,5 @@
+import { openFeedbackModal } from '../ui/FeedbackModal.js';
+
 export default class MenuScene extends Phaser.Scene {
   constructor(){ super('Menu'); }
   init(){ this.deferredPrompt = null; }
@@ -27,5 +29,27 @@ export default class MenuScene extends Phaser.Scene {
     installBtn.className = 'install-btn'; installBtn.textContent = 'Zainstaluj aplikację'; installBtn.hidden = true; document.body.appendChild(installBtn);
     window.addEventListener('beforeinstallprompt', (e)=>{ e.preventDefault(); this.deferredPrompt = e; installBtn.hidden = false; });
     installBtn.addEventListener('click', async ()=> { if (!this.deferredPrompt) return; this.deferredPrompt.prompt(); await this.deferredPrompt.userChoice; this.deferredPrompt = null; installBtn.hidden = true; });
+    // w create() np. GameScene i MenuScene
+    // const icons = [
+    //   { key:'github',   url:'https://github.com/twojrepo', tooltip:'Zgłoś błąd na GitHub' },
+    //   { key:'patronite',url:null, tooltip:'Patronite – wkrótce' },
+    //   { key:'wspieram', url:null, tooltip:'Wspieram.to – wkrótce' },
+    //   { key:'blog',     url:'https://blog.softwareveteran.dev', tooltip:'Mój blog' },
+    //   { key:'feedback', url:null, tooltip:'Prześlij opinię', action:()=> openFeedbackModal(this) }
+    // ];
+
+    // const dockY = this.scale.height - 40;
+    // let posX = this.scale.width/2 - (icons.length*50)/2;
+
+    // icons.forEach(icon => {
+    //   const img = this.add.image(posX, dockY, icon.key).setInteractive({ useHandCursor:true }).setScale(0.5);
+    //   img.setAlpha(icon.url ? 1 : 0.4); // nieaktywne przyciemnione
+    //   img.on('pointerdown', () => {
+    //     if (icon.url) window.open(icon.url, '_blank');
+    //     else this.toast(icon.tooltip);
+    //   });
+    //   posX += 50;
+    // });
+
   }
 }

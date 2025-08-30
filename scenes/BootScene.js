@@ -15,6 +15,14 @@ export default class BootScene extends Phaser.Scene {
     this.load.audio('sfx_success', 'assets/sounds/success.wav');
     this.load.audio('sfx_fail', 'assets/sounds/fail.wav');
 
+    this.load.svg('github',    'assets/icons/github.svg',    { width: 48, height: 48 });
+    this.load.svg('patronite', 'assets/icons/patronite.svg', { width: 48, height: 48 });
+    this.load.svg('wspieram',  'assets/icons/wspieram.svg',  { width: 48, height: 48 });
+    this.load.svg('blog',      'assets/icons/blog.svg',      { width: 48, height: 48 });
+    this.load.svg('feedback',  'assets/icons/feedback.svg',  { width: 48, height: 48 });
+    
+
+
     // Tiny texture for particles/bars
     const g = this.make.graphics({x:0,y:0,add:false});
     g.fillStyle(0xffffff,1).fillRect(0,0,4,4);

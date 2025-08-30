@@ -13,6 +13,7 @@ const config = {
   backgroundColor: '#0e1014',
   scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH, width: 1280, height: 720 },
   physics: { default: 'arcade', arcade: { debug: false } },
+  dom: { createContainer: true },
   scene: [BootScene, MenuScene, CharacterScene, DetailsScene, RulesScene, GameScene],
 };
 

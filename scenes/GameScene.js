@@ -1,5 +1,7 @@
 import CardDeck from '../systems/CardDeck.js';
 import { EVENT_CARDS } from '../data/cards.js';
+import { openFeedbackModal } from '../ui/FeedbackModal.js';
+
 
 const CARD_RARITY = {
   // epickie
@@ -120,38 +122,6 @@ export default class GameScene extends Phaser.Scene {
     this.reduceStressBtn = this.createButton(BTN_X, 96, 'Zredukuj stres', () => this.reduceStressAction());
     this.reduceRiskBtn   = this.createButton(BTN_X, 136, 'Zredukuj ryzyko', () => this.reduceRiskAction());
 
-    // this.endTurnBtn = this.createButton(BTN_X, 16, 'Zakończ turę', {
-    //   fontFamily: 'Arial', fontSize: 20, color: '#0e1014', backgroundColor: '#9ef01a',
-    //   padding: { x: 12, y: 8 }
-    // }).setInteractive({ useHandCursor: true }).setDepth(500);
-    // this.endTurnBtn.on('pointerdown', () => { this.sfx.click?.play({volume:0.6}); this.endTurn(); });
-    // // this.endTurnBtn.on('pointerdown', () => this.endTurn());
-
-
-    // // this.cardBtn = this.add.text(width - 340, 16, 'Dobierz kartę', { fontFamily: 'Arial', fontSize: 20, color: '#0e1014', backgroundColor: '#9ef01a', padding: { x: 12, y: 8 } }).setInteractive({ useHandCursor: true });
-    // this.cardBtn = this.createButton(BTN_X, 56, 'Dobierz kartę', {
-    //   fontFamily: 'Arial', fontSize: 20, color: '#0e1014', backgroundColor: '#9ef01a',
-    //   padding: { x: 12, y: 8 }
-    // }).setInteractive({ useHandCursor: true }).setDepth(500);
-    // this.cardBtn.on('pointerdown', () => this.drawCard());
-    
-    //     // --- Akcje ogólne: redukcje ---
-    // // (użyj tej samej stałej BTN_X i schematu warstw co inne przyciski)
-    // this.reduceStressBtn = this.acreateButton(BTN_X, 96, 'Zredukuj stres', {
-    //   fontFamily: 'Arial', fontSize: 20, color: '#0e1014', backgroundColor: '#9ef01a',
-    //   padding: { x: 12, y: 8 }
-    // }).setOrigin(0,0).setInteractive({ useHandCursor: true }).setDepth(500);
-
-    // this.reduceRiskBtn = this.createButton(BTN_X, 136, 'Zredukuj ryzyko', {
-    //   fontFamily: 'Arial', fontSize: 20, color: '#0e1014', backgroundColor: '#9ef01a',
-    //   padding: { x: 12, y: 8 }
-    // }).setOrigin(0,0).setInteractive({ useHandCursor: true }).setDepth(500);
-
-    // // Handlery kliknięć
-    // this.reduceStressBtn.on('pointerdown', () => { this.sfx?.click?.play({ volume: 0.6 }); this.reduceStressAction(); });
-    // this.reduceRiskBtn.on('pointerdown',   () => { this.sfx?.click?.play({ volume: 0.6 }); this.reduceRiskAction(); })
-
-
     this.grid = { cols: 3, rows: 3, cellW: 300, cellH: 160, startX: 60, startY: 120 };
     this.cells = [];
 
@@ -168,6 +138,47 @@ export default class GameScene extends Phaser.Scene {
       const t = this.add.text(lx + 22, ly, label, { fontFamily:'Arial', fontSize:14, color:'#cfd1d4' }).setOrigin(0,0.5).setDepth(400);
       lx += 110;
     });
+
+    // w create() np. GameScene i MenuScene
+    const scene = this;
+    const icons = [
+      { key:'github',   url:'https://github.com/twojrepo', tooltip:'Zgłoś błąd na GitHub' },
+      { key:'patronite',url:null, tooltip:'Patronite – wkrótce' },
+      { key:'wspieram', url:null, tooltip:'Wspieram.to – wkrótce' },
+      { key:'blog',     url:'https://blog.softwareveteran.dev', tooltip:'Mój blog' },
+      { key:'feedback', url:null, tooltip:'Prześlij opinię', action:()=> openFeedbackModal(this) }
+    ];
+
+    const dockY = this.scale.height - 40;
+    let posX = this.scale.width/2 - (icons.length*50)/2;
+
+    icons.forEach(icon => {
+      const active = !!(icon.url || icon.action);
+      const img = this.add.image(posX, dockY, icon.key)
+        .setInteractive({ useHandCursor:true })
+        .setScale(0.5)
+        .setAlpha(active ? 1 : 0.4);
+
+      img.on('pointerdown', () => {
+        if (icon.action) { 
+          this.sfx?.click?.play?.({ volume:0.6 });
+          icon.action(); 
+          return; 
+        }
+        if (icon.url) { 
+          this.sfx?.click?.play?.({ volume:0.6 });
+          window.open(icon.url, '_blank'); 
+        } else {
+          // MenuScene zwykle nie ma this.toast — użyj helpera:
+          showToast ? showToast(this, icon.tooltip || 'Wkrótce dostępne') 
+                    : (this.toast && this.toast(icon.tooltip || 'Wkrótce dostępne'));
+        }
+      });
+
+      posX += 50;
+    });
+
+
     this.renderBoard();
     this.updateHUD();
     this.toast('Kliknij projekt, aby wykonać zadanie.');

@@ -1,0 +1,14 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Feedback">
+  <title>Feedback</title>
+  <defs>
+    <linearGradient id="fb_g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5ac8fa"/>
+      <stop offset="100%" stop-color="#2663b5"/>
+    </linearGradient>
+  </defs>
+  <path d="M12 16 h40 a8 8 0 0 1 8 8 v12 a8 8 0 0 1 -8 8 h-16 l-8 8 v-8 h-16 a8 8 0 0 1 -8 -8 v-12 a8 8 0 0 1 8 -8 z"
+        fill="url(#fb_g)" stroke="#3a3f46" stroke-width="3"/>
+  <circle cx="24" cy="30" r="3" fill="#ffffff"/>
+  <circle cx="32" cy="30" r="3" fill="#ffffff"/>
+  <circle cx="40" cy="30" r="3" fill="#ffffff"/>
+</svg>
