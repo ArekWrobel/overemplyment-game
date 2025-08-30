@@ -50,8 +50,8 @@ export default class GameScene extends Phaser.Scene {
     this.turn = 1;
     this.state = {
       role: this.role,
-      actionsPerTurn: 3,
-      actionsLeft: 3,
+      actionsPerTurn: 5,
+      actionsLeft: 5,
       stress: 0,
       detectionRisk: 3,
       money: 20,
@@ -69,6 +69,28 @@ export default class GameScene extends Phaser.Scene {
       this.role = data.save.role;
       this.perk = data.save.perk;
     }
+  }
+  
+  createButton(x, y, label, callback) {
+    const WIDTH = 180;
+    const HEIGHT = 32;
+
+    const bg = this.add.rectangle(x, y, WIDTH, HEIGHT, 0x9ef01a)
+      .setOrigin(0,0).setInteractive({ useHandCursor:true }).setDepth(500);
+    const txt = this.add.text(x + WIDTH/2, y + HEIGHT/2, label, {
+      fontFamily: 'Arial', fontSize: 18, color: '#0e1014'
+    }).setOrigin(0.5).setDepth(501);
+
+    bg.on('pointerdown', () => {
+      this.sfx?.click?.play({volume:0.6});
+      callback();
+    });
+
+    // hover efekt
+    bg.on('pointerover', () => bg.setFillStyle(0xbff94a));
+    bg.on('pointerout', () => bg.setFillStyle(0x9ef01a));
+
+    return { bg, txt };
   }
 
   create(){
@@ -92,21 +114,43 @@ export default class GameScene extends Phaser.Scene {
     
     const BTN_X = width - 180;
 
-    // this.endTurnBtn = this.add.text(width - 160, 16, 'Zakończ turę', { fontFamily: 'Arial', fontSize: 20, color: '#0e1014', backgroundColor: '#9ef01a', padding: { x: 12, y: 8 } }).setInteractive({ useHandCursor: true });
-    this.endTurnBtn = this.add.text(BTN_X, 16, 'Zakończ turę', {
-      fontFamily: 'Arial', fontSize: 20, color: '#0e1014', backgroundColor: '#9ef01a',
-      padding: { x: 12, y: 8 }
-    }).setInteractive({ useHandCursor: true }).setDepth(500);
-    this.endTurnBtn.on('pointerdown', () => { this.sfx.click?.play({volume:0.6}); this.endTurn(); });
-    // this.endTurnBtn.on('pointerdown', () => this.endTurn());
+    // Prawa kolumna przycisków
+    this.endTurnBtn = this.createButton(BTN_X, 16, 'Zakończ turę', () => this.endTurn());
+    this.cardBtn    = this.createButton(BTN_X, 56, 'Dobierz kartę', () => this.drawCard());
+    this.reduceStressBtn = this.createButton(BTN_X, 96, 'Zredukuj stres', () => this.reduceStressAction());
+    this.reduceRiskBtn   = this.createButton(BTN_X, 136, 'Zredukuj ryzyko', () => this.reduceRiskAction());
+
+    // this.endTurnBtn = this.createButton(BTN_X, 16, 'Zakończ turę', {
+    //   fontFamily: 'Arial', fontSize: 20, color: '#0e1014', backgroundColor: '#9ef01a',
+    //   padding: { x: 12, y: 8 }
+    // }).setInteractive({ useHandCursor: true }).setDepth(500);
+    // this.endTurnBtn.on('pointerdown', () => { this.sfx.click?.play({volume:0.6}); this.endTurn(); });
+    // // this.endTurnBtn.on('pointerdown', () => this.endTurn());
 
 
-    // this.cardBtn = this.add.text(width - 340, 16, 'Dobierz kartę', { fontFamily: 'Arial', fontSize: 20, color: '#0e1014', backgroundColor: '#9ef01a', padding: { x: 12, y: 8 } }).setInteractive({ useHandCursor: true });
-    this.cardBtn = this.add.text(BTN_X, 82, 'Dobierz kartę', {
-      fontFamily: 'Arial', fontSize: 20, color: '#0e1014', backgroundColor: '#9ef01a',
-      padding: { x: 12, y: 8 }
-    }).setInteractive({ useHandCursor: true }).setDepth(500);
-    this.cardBtn.on('pointerdown', () => this.drawCard());
+    // // this.cardBtn = this.add.text(width - 340, 16, 'Dobierz kartę', { fontFamily: 'Arial', fontSize: 20, color: '#0e1014', backgroundColor: '#9ef01a', padding: { x: 12, y: 8 } }).setInteractive({ useHandCursor: true });
+    // this.cardBtn = this.createButton(BTN_X, 56, 'Dobierz kartę', {
+    //   fontFamily: 'Arial', fontSize: 20, color: '#0e1014', backgroundColor: '#9ef01a',
+    //   padding: { x: 12, y: 8 }
+    // }).setInteractive({ useHandCursor: true }).setDepth(500);
+    // this.cardBtn.on('pointerdown', () => this.drawCard());
+    
+    //     // --- Akcje ogólne: redukcje ---
+    // // (użyj tej samej stałej BTN_X i schematu warstw co inne przyciski)
+    // this.reduceStressBtn = this.acreateButton(BTN_X, 96, 'Zredukuj stres', {
+    //   fontFamily: 'Arial', fontSize: 20, color: '#0e1014', backgroundColor: '#9ef01a',
+    //   padding: { x: 12, y: 8 }
+    // }).setOrigin(0,0).setInteractive({ useHandCursor: true }).setDepth(500);
+
+    // this.reduceRiskBtn = this.createButton(BTN_X, 136, 'Zredukuj ryzyko', {
+    //   fontFamily: 'Arial', fontSize: 20, color: '#0e1014', backgroundColor: '#9ef01a',
+    //   padding: { x: 12, y: 8 }
+    // }).setOrigin(0,0).setInteractive({ useHandCursor: true }).setDepth(500);
+
+    // // Handlery kliknięć
+    // this.reduceStressBtn.on('pointerdown', () => { this.sfx?.click?.play({ volume: 0.6 }); this.reduceStressAction(); });
+    // this.reduceRiskBtn.on('pointerdown',   () => { this.sfx?.click?.play({ volume: 0.6 }); this.reduceRiskAction(); })
+
 
     this.grid = { cols: 3, rows: 3, cellW: 300, cellH: 160, startX: 60, startY: 120 };
     this.cells = [];
@@ -424,20 +468,12 @@ showCardOverlay(card, rarity = 'common') {
     ].join('    '));
   }
 
-  // drawCard(){
-  //   const card = this.deck.draw();
-  //   // rarity badge (before applying effect for UX timing)
-  //   const rarity = CARD_RARITY[card.id] || 'common';
-  //   this.showRarityBadge(rarity, card.title);
-  //   card.apply(this.state);
-  //   this.toast(`${card.title}: ${card.description}`);
-
-  //   if (this.state.pendingNewProject) { this.addProject(); this.state.pendingNewProject = false; this.renderBoard(); }
-  //   this.updateHUD();
-  //   this.autosave();
-  // }
-
   drawCard(){
+    if (this.state.skipTurn) { this.toast('Ta tura jest pominięta.'); return; }
+    if (this.state.actionsLeft < 1) { this.toast('Brak PA.'); return; }
+    
+    his.state.actionsLeft -= 1;
+
     const card = this.deck.draw();
     const rarity = CARD_RARITY[card.id] || 'common';
   
@@ -452,6 +488,35 @@ showCardOverlay(card, rarity = 'common') {
       this.state.pendingNewProject = false;
       this.renderBoard();
     }
+    this.updateHUD();
+    this.autosave();
+  }
+  // Redukcja stresu: koszt 1 PA, −1 stres
+  reduceStressAction() {
+    if (this.state.skipTurn) { this.toast('Ta tura jest pominięta.'); return; }
+    if (this.state.actionsLeft < 1) { this.toast('Brak PA.'); return; }
+
+    this.state.actionsLeft -= 1;
+    this.state.stress = Math.max(0, this.state.stress - 1);
+
+    // krótka animka i komunikat
+    this.cameras.main.flash(120, 30, 180, 30);
+    this.toast('Stres −1');
+    this.updateHUD();
+    this.autosave();
+  }
+
+  // Redukcja ryzyka: koszt 2 PA, −2% ryzyka
+  reduceRiskAction() {
+    if (this.state.skipTurn) { this.toast('Ta tura jest pominięta.'); return; }
+    if (this.state.actionsLeft < 2) { this.toast('Brak PA.'); return; }
+
+    this.state.actionsLeft -= 2;
+    this.state.detectionRisk = Math.max(0, this.state.detectionRisk - 2);
+
+    // krótka animka i komunikat
+    this.cameras.main.flash(120, 30, 30, 180);
+    this.toast('Ryzyko −2%');
     this.updateHUD();
     this.autosave();
   }
