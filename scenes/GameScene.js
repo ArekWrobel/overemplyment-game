@@ -472,7 +472,7 @@ showCardOverlay(card, rarity = 'common') {
     if (this.state.skipTurn) { this.toast('Ta tura jest pominięta.'); return; }
     if (this.state.actionsLeft < 1) { this.toast('Brak PA.'); return; }
     
-    his.state.actionsLeft -= 1;
+    this.state.actionsLeft -= 1;
 
     const card = this.deck.draw();
     const rarity = CARD_RARITY[card.id] || 'common';
