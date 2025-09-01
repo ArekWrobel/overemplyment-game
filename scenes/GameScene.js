@@ -142,7 +142,7 @@ export default class GameScene extends Phaser.Scene {
     // w create() np. GameScene i MenuScene
     const scene = this;
     const icons = [
-      { key:'github',   url:'https://github.com/twojrepo', tooltip:'Zgłoś błąd na GitHub' },
+      { key:'github',   url:'https://github.com/ArekWrobel/overemplyment-game/issues', tooltip:'Zgłoś błąd na GitHub' },
       { key:'patronite',url:null, tooltip:'Patronite – wkrótce' },
       { key:'wspieram', url:null, tooltip:'Wspieram.to – wkrótce' },
       { key:'blog',     url:'https://blog.softwareveteran.dev', tooltip:'Mój blog' },
